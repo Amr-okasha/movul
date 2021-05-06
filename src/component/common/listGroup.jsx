@@ -11,10 +11,6 @@ const ListGroup = (props) => {
 
   return (
     <ul className="list-group">
-      <li className="list-group-item " aria-current="true">
-        All Genres
-      </li>
-
       {items.map((item) => (
         <li
           key={item[valueProperty]}
@@ -32,7 +28,7 @@ const ListGroup = (props) => {
     </ul>
   );
 };
-//this instead of get it as props from parent
+
 ListGroup.defaultProps = {
   valueProperty: "_id",
   textProperty: "name",

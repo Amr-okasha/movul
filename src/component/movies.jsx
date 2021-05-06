@@ -4,7 +4,7 @@ import LikeComponent from "./common/LikeComponent";
 import PaginationComponent from "./common/PaginationComponet";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
-import { genres } from "../services/fakeGenreService";
+import { getGenres } from "../services/fakeGenreService";
 
 class Movies extends Component {
   constructor(props) {
@@ -42,10 +42,11 @@ class Movies extends Component {
   };
 
   selectListHandler = (genre) => {
-    this.setState({ selectedGenre: genre });
+    this.setState({ selectedGenre: genre, currentPage: 1 });
   };
 
   componentDidMount = () => {
+    const genres = [{ name: "All Genres" }, ...getGenres()];
     this.setState({
       movies: getMovies(),
       genre: genres,
@@ -62,10 +63,11 @@ class Movies extends Component {
       genre,
     } = this.state;
 
-    const filtered = selectedGenre
-      ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
-      : allMovies;
-    //replace allMovies with filtered
+    const filtered =
+      selectedGenre && selectedGenre._id
+        ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
+        : allMovies;
+
     const movies = paginate(filtered, currentPage, pageSize);
 
     return count === 0 ? (
@@ -85,8 +87,6 @@ class Movies extends Component {
             <ListGroup
               items={genre}
               selectedGenre={this.state.selectedGenre}
-              // valueProperty="_id"
-              // textProperty="name"
               onSelectItem={this.selectListHandler}
             />
           </div>
