@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import LikeComponent from "./common/LikeComponent";
+import PaginationComponent from "./common/PaginationComponet";
+import { paginate } from "../utils/paginate";
 
 class Movies extends Component {
   constructor(props) {
@@ -8,6 +10,8 @@ class Movies extends Component {
 
     this.state = {
       movies: getMovies(),
+      pageSize: 4,
+      currentPage: 1,
     };
   }
 
@@ -27,11 +31,21 @@ class Movies extends Component {
       movies,
     });
   };
+
+  pageChangeHandler = (page) => {
+    this.setState({
+      currentPage: page + 1,
+    });
+  };
+
   render() {
     const { length: count } = this.state.movies;
+    const { currentPage, pageSize, movies: allMovies } = this.state;
+
+    const movies = paginate(allMovies, currentPage, pageSize);
 
     return count === 0 ? (
-      <React.Fragment>
+      <>
         <p>There are not movies in the data base </p>
         <p>
           Total Number :
@@ -39,9 +53,9 @@ class Movies extends Component {
             {this.handleCountResult()}
           </span>{" "}
         </p>
-      </React.Fragment>
+      </>
     ) : (
-      <React.Fragment>
+      <>
         <p>
           Showing <span className={this.handleCountstyles()}>{count}</span>{" "}
           movies in the database
@@ -56,7 +70,7 @@ class Movies extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.movies.map((movie) => {
+            {movies.map((movie) => {
               return (
                 <tr key={movie._id}>
                   <td>{movie.title}</td>
@@ -83,7 +97,13 @@ class Movies extends Component {
             })}
           </tbody>
         </table>
-      </React.Fragment>
+        <PaginationComponent
+          itemCount={count}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={this.pageChangeHandler}
+        />
+      </>
     );
   }
   handleCountResult() {
