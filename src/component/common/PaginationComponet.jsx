@@ -1,5 +1,5 @@
 import React from "react";
-// import _ from "lodash";
+import propTypes from "prop-types";
 
 const PaginationComponent = (props) => {
   const { itemCount, pageSize, onPageChange, currentPage } = props;
@@ -7,7 +7,6 @@ const PaginationComponent = (props) => {
   const pagesCount = Math.ceil(itemCount / pageSize);
   if (pagesCount === 1) return null;
   const pages = [...Array(pagesCount).keys()];
-  // const _pagesArray = _.range(1, itemCount / pageSize + 1);
 
   return (
     <div>
@@ -38,5 +37,10 @@ const PaginationComponent = (props) => {
     </div>
   );
 };
-
+PaginationComponent.propTypes = {
+  itemCount: propTypes.number.isRequired,
+  pageSize: propTypes.number.isRequired,
+  onPageChange: propTypes.func.isRequired,
+  currentPage: propTypes.number.isRequired,
+};
 export default PaginationComponent;
