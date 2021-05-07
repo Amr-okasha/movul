@@ -60,8 +60,7 @@ class Movies extends Component {
     });
   };
 
-  render() {
-    const { length: count } = this.state.movies;
+  getData = () => {
     const {
       currentPage,
       pageSize,
@@ -78,6 +77,14 @@ class Movies extends Component {
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
     const movies = paginate(sorted, currentPage, pageSize);
+    return { filtered: filtered, movies: movies };
+  };
+
+  render() {
+    const { length: count } = this.state.movies;
+    const { currentPage, pageSize, movies: allMovies, genre } = this.state;
+
+    const { filtered, movies } = this.getData();
 
     return count === 0 ? (
       <>
