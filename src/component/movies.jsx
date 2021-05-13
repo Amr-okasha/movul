@@ -66,7 +66,7 @@ class Movies extends Component {
       pageSize,
       selectedGenre,
       movies: allMovies,
-      genre,
+
       sortColumn,
     } = this.state;
 
@@ -122,13 +122,13 @@ class Movies extends Component {
               sortColumn={this.state.sortColumn}
             />
           </div>
-          <PaginationComponent
-            itemCount={filtered.length}
-            pageSize={pageSize}
-            currentPage={currentPage}
-            onPageChange={this.pageChangeHandler}
-          />
         </div>
+        <PaginationComponent
+          itemCount={filtered.length}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={this.pageChangeHandler}
+        />
       </>
     );
   }
