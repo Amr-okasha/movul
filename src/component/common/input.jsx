@@ -1,21 +1,21 @@
-import React, { Component } from "react";
+import React from "react";
 
-const Input = ({ onChange, value, type, name, label, placeholder, error }) => {
+const Input = ({ type, label, error, ...rest }) => {
   return (
     <li className="mb-3">
       <label htmlFor={type} className="form-label">
         {label}
       </label>
       <input
-        onChange={onChange}
-        value={value}
-        name={name}
-        autoFocus
-        // ref={this.username}
+        {...rest}
+        // onChange={onChange}
+        // placeholder={placeholder}
+        // value={value}
+        // name={name}
         type={type}
+        autoFocus
         className="form-control"
         id={type}
-        placeholder={placeholder}
       />
       {error && <div className="alert alert-danger">{error}</div>}
     </li>
