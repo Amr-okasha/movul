@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Input from "./common/input";
+import joi from "joi-browser";
 
 class LogIn extends Component {
   constructor(props) {
@@ -10,13 +11,12 @@ class LogIn extends Component {
       error: {},
     };
   }
+
   validatePrperty = ({ name, value }) => {
-    if (name === "username") {
-      if (value.trim() === "") return "user name is required";
-    }
-    if (name === "password") {
-      if (value.trim() === "") return "password is required";
-    }
+    const obj = { [name]: value };
+    const schema = { [name]: this.schema[name] };
+    const { error } = joi.validate(obj, schema);
+    return error ? error.details[0].message : null;
   };
   handleChange = ({ currentTarget: input }) => {
     const acount = { ...this.state.acount };
@@ -30,13 +30,18 @@ class LogIn extends Component {
       error,
     });
   };
-
+  schema = {
+    username: joi.string().min(10).max(20).required().label("Username"),
+    password: joi.string().min(10).max(20).required().label("Password"),
+  };
   validate = () => {
+    const result = joi.validate(this.state.acount, this.schema, {
+      abortEarly: false,
+    });
+    if (!result.error) return null;
     const error = {};
-    const { acount } = this.state;
-    if (acount.username.trim() === "") error.username = "username is required";
-    if (acount.password.trim() === "") error.password = "password is required";
-    return Object.keys(error).length ? error : null;
+    for (let item of result.error.details) error[item.path[0]] = item.message;
+    return error;
   };
 
   // username = React.createRef();
@@ -78,7 +83,11 @@ class LogIn extends Component {
               error={this.state.error.password}
             />
             <li className="mb-3">
-              <button type="submit" class="btn btn-primary">
+              <button
+                disabled={this.validate()}
+                type="submit"
+                className="btn btn-primary"
+              >
                 Sign in
               </button>
             </li>
