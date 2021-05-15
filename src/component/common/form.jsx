@@ -1,6 +1,7 @@
 import { Component } from "react";
 import joi from "joi-browser";
 import Input from "./input";
+import Select from "../SelectComponent";
 class Form extends Component {
   constructor(props) {
     super(props);
@@ -55,7 +56,7 @@ class Form extends Component {
   renderFormButton = (Label) => {
     return (
       <button
-        disabled={this.validate()}
+        // disabled={this.validate()}
         type="submit"
         className="btn btn-primary"
       >
@@ -63,6 +64,17 @@ class Form extends Component {
       </button>
     );
   };
+  renderSelectField(genre, name) {
+    const { data } = this.state;
+    return (
+      <Select
+        value={data[name]}
+        onChange={this.handleChange}
+        optionsData={genre}
+        name={name}
+      />
+    );
+  }
 
   renderInputField = (name, type, label, placeholder) => {
     const { data } = this.state;

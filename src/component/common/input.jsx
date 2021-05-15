@@ -2,7 +2,7 @@ import React from "react";
 
 const Input = ({ type, label, error, ...rest }) => {
   return (
-    <li className="mb-3">
+    <div className="mb-3 nobu">
       <label htmlFor={type} className="form-label">
         {label}
       </label>
@@ -18,7 +18,7 @@ const Input = ({ type, label, error, ...rest }) => {
         id={type}
       />
       {error && <div className="alert alert-danger">{error}</div>}
-    </li>
+    </div>
   );
 };
 

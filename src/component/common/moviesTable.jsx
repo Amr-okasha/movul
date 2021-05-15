@@ -14,7 +14,7 @@ class Table extends Component {
         <Link to={`/movies/${movie._id}`}>{movie.title}</Link>
       ),
     },
-    { path: "grnre.name", label: "Genre" },
+    { path: "genre.name", label: "Genre" },
     { path: "numberInStock", label: "Stock" },
     { path: "dailyRentalRate", label: "Rate" },
     {

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
-import LikeComponent from "./common/LikeComponent";
 import PaginationComponent from "./common/PaginationComponet";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
@@ -18,6 +17,8 @@ class Movies extends Component {
       pageSize: 4,
       currentPage: 1,
       sortColumn: { path: "title", order: "asc" },
+      searchQuery: "",
+      selectedGenre: null,
     };
   }
 
@@ -45,7 +46,7 @@ class Movies extends Component {
   };
 
   selectListHandler = (genre) => {
-    this.setState({ selectedGenre: genre, currentPage: 1 });
+    this.setState({ selectedGenre: genre, currentPage: 1, searchQuery: "" });
   };
 
   sortHandler = (sortColumn) => {
@@ -59,27 +60,41 @@ class Movies extends Component {
       genre: genres,
     });
   };
-
+  // addNewMovie = (data) => {
+  //   this.setState({ ...this.state.movies, data });
+  // };
   getData = () => {
     const {
       currentPage,
       pageSize,
       selectedGenre,
       movies: allMovies,
-
+      searchQuery,
       sortColumn,
     } = this.state;
 
-    const filtered =
-      selectedGenre && selectedGenre._id
-        ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
-        : allMovies;
+    let filtered = allMovies;
+    if (searchQuery)
+      filtered = allMovies.filter((m) =>
+        m.title.toLowerCase().startsWith(searchQuery.toLowerCase())
+      );
+    else if (selectedGenre && selectedGenre._id)
+      filtered = allMovies.filter((m) => m.genre._id === selectedGenre._id);
+
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
     const movies = paginate(sorted, currentPage, pageSize);
     return { filtered: filtered, movies: movies };
   };
-
+  handleQueryChange = (searchQuery) => {
+    this.setState({ searchQuery, currentPage: 1, selectedGenre: null });
+  };
+  handleButton = () => {
+    this.props.history.push("/movies/new");
+  };
+  saveMovie = (data) => {
+    this.setState({ movies: [...this.state.movies, ...data] });
+  };
   render() {
     const { length: count } = this.state.movies;
     const { currentPage, pageSize, movies: allMovies, genre } = this.state;
@@ -107,6 +122,12 @@ class Movies extends Component {
             />
           </div>
           <div className="col">
+            <button
+              onClick={this.handleButton}
+              className="btn btn-primary mb-3"
+            >
+              New movie
+            </button>
             <p>
               Showing{" "}
               <span className={this.handleCountstyles()}>
@@ -114,6 +135,16 @@ class Movies extends Component {
               </span>{" "}
               movies in the database
             </p>
+            <div>
+              <input
+                type="text"
+                name="query"
+                className="form-control"
+                placeholder="search ...."
+                value={this.state.searchQuery}
+                onChange={(e) => this.handleQueryChange(e.target.value)}
+              />
+            </div>
             <Table
               onHandleDelete={this.deleteHandler}
               onHandleLike={this.likeHandler}

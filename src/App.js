@@ -8,6 +8,7 @@ import NotFound from './component/common/notFound';
 import MovieForm from './component/movieForm';
 import LogIn from './component/logIn';
 import './App.css';
+import Register from './component/Rigester';
 
 
 
@@ -20,6 +21,7 @@ function App() {
         <Switch>
           <Route path="/movies/:id" component={MovieForm} />
           <Route path="/log-in" component={LogIn} />
+          <Route path="/register" component={Register} />
           <Route path="/movies" component={Movies} />
           <Route path="/customers" component={Customers} />
           <Route path="/rentals" component={Rentals} />

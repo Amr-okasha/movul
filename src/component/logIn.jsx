@@ -2,6 +2,7 @@ import React from "react";
 
 import joi from "joi-browser";
 import Form from "./common/form";
+import { NavLink } from "react-router-dom";
 
 class LogIn extends Form {
   constructor(props) {
@@ -33,7 +34,10 @@ class LogIn extends Form {
               "example@gmail.com"
             )}
             {this.renderInputField("password", "password", "Password", "12345")}
-
+            <div>
+              <h5> Have email address : </h5>
+              <NavLink to="/register">back to register page</NavLink>
+            </div>
             <li className="mb-3">{this.renderFormButton("Login")}</li>
           </ul>
         </form>

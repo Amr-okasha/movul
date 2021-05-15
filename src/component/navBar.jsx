@@ -20,6 +20,9 @@ class NavBar extends Component {
         <div className="container-md ml-4">
           <NavLink to="/log-in">Log-in</NavLink>
         </div>
+        <div className="container-md ml-4">
+          <NavLink to="/register">Register</NavLink>
+        </div>
       </nav>
     );
   }
