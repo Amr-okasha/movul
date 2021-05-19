@@ -29,9 +29,9 @@ class Table extends Component {
     },
     {
       key: "delete",
-      content: () => (
+      content: (movie) => (
         <button
-          onClick={(movie) => this.props.onHandleDelete(movie)}
+          onClick={() => this.props.onHandleDelete(movie)}
           className="btn btn-danger btn-sm"
         >
           Delete

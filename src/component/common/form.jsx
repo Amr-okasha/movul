@@ -13,8 +13,12 @@ class Form extends Component {
   }
 
   validatePrperty = ({ name, value }) => {
+    console.log(name, "name");
+    console.log(value, "value");
     const obj = { [name]: value };
+    console.log(obj, "obj");
     const schema = { [name]: this.schema[name] };
+    console.log(schema, "schema");
     const { error } = joi.validate(obj, schema);
     return error ? error.details[0].message : null;
   };

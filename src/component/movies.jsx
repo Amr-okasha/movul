@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { getMovies } from "../services/fakeMovieService";
+import { getMovies, deleteMovie } from "../services/movieService";
 import PaginationComponent from "./common/PaginationComponet";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
-import { getGenres } from "../services/fakeGenreService";
+import { getGenres } from "../services/GereService";
 import Table from "./common/moviesTable";
 import _ from "lodash";
+import { toast } from "react-toastify";
 
 class Movies extends Component {
   constructor(props) {
@@ -22,11 +23,25 @@ class Movies extends Component {
     };
   }
 
-  deleteHandler = (movie) => {
-    const movies = this.state.movies.filter((m) => m._id !== movie._id);
+  deleteHandler = async (movie) => {
+    const useOriginalMovies = this.state.movies;
+    console.log(movie, "movie");
+    const movies = useOriginalMovies.filter((m) => m._id !== movie._id);
     this.setState({
       movies,
     });
+    try {
+      await deleteMovie(movie._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("This movie has already been deleted");
+      else {
+        toast.error("Un Expected Error");
+        this.setState({
+          movies: useOriginalMovies,
+        });
+      }
+    }
   };
   likeHandler = (movie) => {
     const movies = [...this.state.movies];
@@ -53,10 +68,12 @@ class Movies extends Component {
     this.setState({ sortColumn });
   };
 
-  componentDidMount = () => {
-    const genres = [{ name: "All Genres", _id: "" }, ...getGenres()];
+  componentDidMount = async () => {
+    const { data } = await getGenres();
+    const { data: movies } = await getMovies();
+    const genres = [{ name: "All Genres", _id: "" }, ...data];
     this.setState({
-      movies: getMovies(),
+      movies,
       genre: genres,
     });
   };

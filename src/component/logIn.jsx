@@ -1,8 +1,8 @@
 import React from "react";
-
 import joi from "joi-browser";
 import Form from "./common/form";
 import { NavLink } from "react-router-dom";
+import { login } from "../services/authService";
 
 class LogIn extends Form {
   constructor(props) {
@@ -15,11 +15,28 @@ class LogIn extends Form {
   }
 
   schema = {
-    username: joi.string().min(10).max(20).required().label("Username"),
-    password: joi.string().min(10).max(20).required().label("Password"),
+    username: joi.string().min(10).required().label("Username"),
+    password: joi.string().min(10).required().label("Password"),
   };
 
-  doSubmit = () => {};
+  doSubmit = async () => {
+    try {
+      const { username: email, password } = this.state.data;
+      // console.log("data", "data");
+      const { data } = await login(email, password);
+      console.log("data", "data");
+      localStorage.setItem("token", data);
+      window.location = "/";
+    } catch (ex) {
+      if (ex.response && ex.response.status === 400) {
+        const error = { ...this.state.errors };
+        error.username = ex.response.data;
+        this.setState({
+          error,
+        });
+      }
+    }
+  };
 
   render() {
     return (

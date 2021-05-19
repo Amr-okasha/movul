@@ -3,8 +3,9 @@ import joi from "joi-browser";
 import Form from "./common/form";
 import { NavLink } from "react-router-dom";
 import Movies from "./movies";
-import { getMovie, saveMovie } from "./../services/fakeMovieService";
-import { getGenres } from "../services/fakeGenreService";
+import { getMovie, saveMovie } from "./../services/movieService";
+import { getGenres } from "../services/GereService";
+import { toast } from "react-toastify";
 
 class Register extends Form {
   constructor(props) {
@@ -13,7 +14,7 @@ class Register extends Form {
     this.state = {
       data: {
         title: "",
-        genre: "",
+        genreId: "",
         numberInStock: "",
         dailyRentalRate: "",
       },
@@ -24,37 +25,41 @@ class Register extends Form {
 
   schema = {
     title: joi.string().required().min(4).label("Title"),
-    genre: joi.string().required().label("Genre"),
+    genreId: joi.string().required().label("Genre"),
     numberInStock: joi.number().required().min(0).label("Number In Stock"),
     dailyRentalRate: joi.number().required().min(0).max(10).label("Rate"),
   };
 
-  doSubmit = () => {
+  doSubmit = async () => {
     const data = { ...this.state.data };
-    saveMovie(data);
+    await saveMovie(data);
     // addNewMovie(data);
     this.props.history.push("/movies");
   };
 
-  componentDidMount = () => {
-    const genres = getGenres();
+  componentDidMount = async () => {
+    const { data: genres } = await getGenres();
     this.setState({
       genres,
     });
     const movieId = this.props.match.params.id;
     if (movieId === "new") return;
+    try {
+      const { data: movie } = await getMovie(movieId);
+      this.setState({
+        data: {
+          title: movie.title,
+          genreId: movie.genre._id,
+          numberInStock: movie.numberInStock,
+          dailyRentalRate: movie.dailyRentalRate,
+        },
+      });
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        return this.props.history.push("/not-found");
+    }
 
-    const movie = getMovie(movieId);
-    if (!movie) return this.props.history.push("/not-found");
-
-    this.setState({
-      data: {
-        title: movie.title,
-        genre: genres._id,
-        numberInStock: movie.numberInStock,
-        dailyRentalRate: movie.dailyRentalRate,
-      },
-    });
+    // if (!movie) return this.props.history.push("/not-found");
   };
 
   render() {
@@ -74,8 +79,8 @@ class Register extends Form {
                 id="select"
                 className="form-label"
                 onChange={this.handleChange}
-                value={this.state.data.genre}
-                name="genre"
+                value={this.state.data.genreId}
+                name="genreId"
               >
                 {genres.map((opt) => (
                   <option key={opt._id} value={opt._id}>

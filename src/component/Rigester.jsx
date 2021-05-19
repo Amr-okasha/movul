@@ -2,6 +2,7 @@ import React from "react";
 import joi from "joi-browser";
 import Form from "./common/form";
 import { NavLink } from "react-router-dom";
+import { register } from "../services/userService";
 
 class Register extends Form {
   constructor(props) {
@@ -11,8 +12,7 @@ class Register extends Form {
       data: {
         username: "",
         password: "",
-        firstname: "",
-        lastname: "",
+        name: "",
       },
       error: {},
     };
@@ -21,11 +21,24 @@ class Register extends Form {
   schema = {
     username: joi.string().required().min(20).max(30).label("Username"),
     password: joi.string().required().min(20).max(30).label("Password"),
-    firstname: joi.string().required().min(2).max(10).label("First name"),
-    lastname: joi.string().required().min(2).max(10).label("Last name"),
+    name: joi.string().required().min(2).max(10).label("First name"),
   };
 
-  doHandleSubmit = () => {};
+  doSubmit = async () => {
+    try {
+      const response = await register(this.state.data);
+      localStorage.setItem("token", response.headers["x-auth-token"]);
+      window.location = "/";
+    } catch (ex) {
+      if (ex.response && ex.response.status === 400) {
+        const error = { ...this.state.errors };
+        error.username = ex.response.data;
+        this.setState({
+          error,
+        });
+      }
+    }
+  };
 
   render() {
     return (
@@ -44,8 +57,8 @@ class Register extends Form {
               "Password",
               "15678sdsdsdsds"
             )}
-            {this.renderInputField("firstname", "text", "First name", "ahmed")}
-            {this.renderInputField("lastname", "text", "Last name", "omar")}
+            {this.renderInputField("name", "text", "name", "ahmed")}
+
             <div>
               <h5> Have email address ? </h5>
               <NavLink to="/log-in">back to log-in page</NavLink>
