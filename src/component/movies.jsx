@@ -115,7 +115,7 @@ class Movies extends Component {
   render() {
     const { length: count } = this.state.movies;
     const { currentPage, pageSize, movies: allMovies, genre } = this.state;
-
+    const { user } = this.props;
     const { filtered, movies } = this.getData();
 
     return count === 0 ? (
@@ -139,12 +139,14 @@ class Movies extends Component {
             />
           </div>
           <div className="col">
-            <button
-              onClick={this.handleButton}
-              className="btn btn-primary mb-3"
-            >
-              New movie
-            </button>
+            {user && (
+              <button
+                onClick={this.handleButton}
+                className="btn btn-primary mb-3"
+              >
+                New movie
+              </button>
+            )}
             <p>
               Showing{" "}
               <span className={this.handleCountstyles()}>
@@ -168,6 +170,7 @@ class Movies extends Component {
               movies={movies}
               onSort={this.sortHandler}
               sortColumn={this.state.sortColumn}
+              user={user}
             />
           </div>
         </div>

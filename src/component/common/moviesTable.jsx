@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import LikeComponent from "./LikeComponent";
 import TableD from "./table";
+import auth from "../../services/authService";
 
 const styles = { cursor: "pointer" };
 
@@ -27,18 +28,24 @@ class Table extends Component {
         ></LikeComponent>
       ),
     },
-    {
-      key: "delete",
-      content: (movie) => (
-        <button
-          onClick={() => this.props.onHandleDelete(movie)}
-          className="btn btn-danger btn-sm"
-        >
-          Delete
-        </button>
-      ),
-    },
   ];
+
+  deleteColumn = {
+    key: "delete",
+    content: (movie) => (
+      <button
+        onClick={() => this.props.onHandleDelete(movie)}
+        className="btn btn-danger btn-sm"
+      >
+        Delete
+      </button>
+    ),
+  };
+  constructor(props) {
+    super(props);
+    const user = auth.getCurrentUser();
+    if (user && user.isAdmin) this.columns.push(this.deleteColumn);
+  }
 
   render() {
     const { movies, onHandleLike, onHandleDelete, onSort, sortColumn } =

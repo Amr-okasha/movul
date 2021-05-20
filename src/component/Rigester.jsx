@@ -1,8 +1,9 @@
 import React from "react";
 import joi from "joi-browser";
 import Form from "./common/form";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import { register } from "../services/userService";
+import auth from "../services/authService";
 
 class Register extends Form {
   constructor(props) {
@@ -20,14 +21,16 @@ class Register extends Form {
 
   schema = {
     username: joi.string().required().min(20).max(30).label("Username"),
-    password: joi.string().required().min(20).max(30).label("Password"),
+    password: joi.string().required().min(4).max(20).label("Password"),
     name: joi.string().required().min(2).max(10).label("First name"),
   };
 
   doSubmit = async () => {
     try {
       const response = await register(this.state.data);
-      localStorage.setItem("token", response.headers["x-auth-token"]);
+      const jwt = response.headers["x-auth-token"];
+      auth.loginWithJWT(jwt);
+
       window.location = "/";
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
@@ -41,6 +44,7 @@ class Register extends Form {
   };
 
   render() {
+    if (auth.getCurrentUser()) return <Redirect to="/" />;
     return (
       <div>
         <form onSubmit={this.handleSubmit}>

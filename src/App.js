@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
-import jwtDecode from "jwt-decode"
+import auth from "./services/authService"
 import Movies from './component/movies';
 import MovieForm from './component/movieForm';
 import NavBar from './component/navBar';
@@ -13,35 +13,32 @@ import LogOut from './component/LogOut';
 import NotFound from './component/common/notFound';
 import "react-toastify/dist/ReactToastify.css"
 import './App.css';
+import { render } from '@testing-library/react';
+import ProtectedRoutes from './component/ProtectedRoutes';
 
 
 
 class App extends React.Component {
   state = {}
   componentDidMount() {
-    try {
-      const jwt = localStorage.getItem("token")
-      const user = jwtDecode(jwt)
-      console.log(user)
-      this.setState({
-        user
-      })
-    } catch (ex) {
-
-    }
-
+    const user = auth.getCurrentUser()
+    this.setState({
+      user
+    })
   }
   render() {
+
     return (
       <>
         <ToastContainer />
         <NavBar className="mt-0" user={this.state.user} />
         <div className="container">
           <Switch>
-            <Route path="/movies/:id" component={MovieForm} />
+            {/* <Route path="/movies/:id" render={props => !this.state.user ? <Redirect to="/" /> : <MovieForm {...props} />} /> */}
+            <ProtectedRoutes path="/movies/:id" component={MovieForm} />
             <Route path="/log-in" component={LogIn} />
             <Route path="/register" component={Register} />
-            <Route path="/movies" component={Movies} />
+            <Route path="/movies" render={(props) => <Movies {...props} user={this.state.user} />} />
             <Route path="/customers" component={Customers} />
             <Route path="/rentals" component={Rentals} />
             <Route path="/log-out" component={LogOut} />
