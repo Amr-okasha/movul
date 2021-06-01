@@ -1,42 +1,54 @@
 import React, { Component } from "react";
+import Button from "./Button";
 
-class DisplayProduct extends Component {
+class DisplayProducts extends Component {
+  column = [
+    { path: "image", content: (ele, c) => <div>{ele[c.path]}</div> },
+    { path: "name", label: "Product Name :" },
+    { path: "price", label: "Price : " },
+    { path: "reviewNumber", label: "Review Number :" },
+    {
+      id: "delete",
+      content: (ele) => (
+        <Button
+          onClick={this.props.onClick}
+          ele={ele}
+          type="delete"
+          name="Delete"
+        />
+      ),
+    },
+  ];
+
   constructor(props) {
     super(props);
 
     this.state = {};
   }
+  rendering = (ele, c) => {
+    if (c.content) return c.content(ele, c);
+    return `${c.label}${ele[c.path]}`;
+  };
 
   render() {
-    const { ele } = this.props;
+    const { products, onOrder } = this.props;
 
-    return (
-      <div
-        className="
-           product 
-           col-xl-12
-           col-md-4
-           col-lg-3
-           col-xl-2
-           bg-light 
-           g-2
-            "
-      >
-        <div>{ele.image}</div>
-        <div>
-          <h4>
-            Product Name : <span className="badge bg-primary">{ele.name}</span>
-          </h4>
-          <p>
-            Price : <span> {ele.price}</span>
-          </p>
-          <p>
-            Reviews : <span> {ele.reviewNumber}</span>
-          </p>
+    return products.map((ele) => {
+      return (
+        <div key={ele[ele]} className="sproduct">
+          {this.column.map((c) => (
+            <div
+              key={ele + c.path}
+              className="column"
+              onClick={() => onOrder(c.path)}
+            >
+              {this.rendering(ele, c)}
+            </div>
+          ))}
         </div>
-      </div>
-    );
+      );
+    });
   }
 }
 
-export default DisplayProduct;
+export default DisplayProducts;

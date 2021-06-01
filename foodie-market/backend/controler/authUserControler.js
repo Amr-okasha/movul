@@ -1,14 +1,13 @@
 const { USER } = require("../model/usermodel")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
+const config = require("../config/custom-environment-variables")
+const configure = require("config")
 
-
-const config = require("../config")
 
 const handleErrors = (ex) => {
-    console.log(ex)
-
     const error = { email: "", password: "" }
+
     //handle error of dublicate
     // if (ex.code === 11000) {
     //     error.email = "this is an exist email please enter other one"
@@ -42,24 +41,21 @@ const handleErrors = (ex) => {
 
     return error
 }
+
 const maxAge = 2 * 24 * 60 * 60
+
 const createToken = (info) => {
-
     return jwt.sign({ info }, config.SECRET, { expiresIn: maxAge })
-
 }
 
 const signin_post = async (req, res) => {
-
     const user = await USER.findOne({
         email: req.body.email,
     })
-
     try {
         if (!user) {
             // return res.status(404).send({ email: "Email is not matched " })
             throw Error("In correct email")
-
         }
         else {
             const auth = await bcrypt.compare(req.body.password, user.password)
@@ -70,7 +66,6 @@ const signin_post = async (req, res) => {
                 res.header({ "x-auth-token": Token })
                 res.cookie("jwt", Token, { maxAge: maxAge * 1000 })
                 res.status(201).send(Token)
-
             }
         }
     } catch (ex) {
@@ -78,19 +73,15 @@ const signin_post = async (req, res) => {
         const error = handleErrors(ex)
         res.status(404).send(error)
     }
-
 }
+
 const register_post = async (req, res) => {
-
-
     console.log(req.body)
-
-
-
     try {
         const checkUser = await USER.findOne({
             email: req.body.email,
         })
+        console.log("req.body")
         if (checkUser) throw Error("Registred")
         const user = await new USER({
             email: req.body.email,
@@ -111,22 +102,18 @@ const register_post = async (req, res) => {
         const error = handleErrors(ex)
         res.status(401).send(error)
     }
-
-
-
     // const error = handleErrors(ex)
-
-
-
-
-
 }
 
-const update_post = async (req, res) => {
+const logout_get = (req, res) => {
+    res.cookie("jwt", "", { maxAge: 0 })
+    res.status(201).send("logout")
+}
+
+const update_put = async (req, res) => {
     console.log(req.params.id)
     try {
         const user = await USER.findById(req.params.id)
-
         user._id = req.params.id
         user.email = req.body.email || user.email
         user.password = req.body.password || user.email
@@ -139,12 +126,9 @@ const update_post = async (req, res) => {
             // email: updatedUser.email,
             // password: updatedUser.password
         })
-
     } catch (ex) {
         res.status(404).send({ message: "Error in connection" })
     }
-
-
 }
 
 const deactivate_delete = async (req, res) => {
@@ -152,10 +136,7 @@ const deactivate_delete = async (req, res) => {
         const user = await USER.findById(req.params.id)
         if (!user) {
             throw Error("User not found")
-        }
-
-        else {
-
+        } else {
             const user = await USER.findByIdAndRemove(req.params.id)
             res.cookie("jwt", "", { maxAge: 0 })
             res.send({ message: "user deactivated successfuly" })
@@ -168,7 +149,10 @@ const deactivate_delete = async (req, res) => {
 
 }
 
-module.exports = { signin_post, register_post, update_post, deactivate_delete }
+
+
+
+module.exports = { signin_post, register_post, update_put, deactivate_delete, logout_get }
 
 
 

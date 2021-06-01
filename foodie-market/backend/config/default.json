@@ -1,0 +1,8 @@
+{
+    "port":"3900",
+    "Requires-Auth":false,
+    "jwtSignOptions":{"expiresIn":2592000},
+    "set-cookieOptions":{"maxAge":2592000000,"httpOnly":true},
+    "del-cookieOptions":{"maxAge":0},
+    "jwtPrivateKey-Secret":"s"
+}
