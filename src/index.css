@@ -5,3 +5,9 @@ body {
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
 }
+.color {
+  background-color: rgb(0, 100, 139) !important;
+}
+.active {
+  background-color: rgb(0, 100, 139) !important ;
+}

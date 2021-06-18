@@ -12,7 +12,12 @@ class Table extends Component {
       path: "title",
       label: "Title",
       content: (movie) => (
-        <Link to={`/movies/${movie._id}`}>{movie.title}</Link>
+        <Link
+          to={`/movies/${movie._id}`}
+          style={{ color: "rgb(0, 100, 139)", textDecoration: "none" }}
+        >
+          {movie.title}
+        </Link>
       ),
     },
     { path: "genre.name", label: "Genre" },

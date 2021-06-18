@@ -13,7 +13,7 @@ import LogOut from './component/LogOut';
 import NotFound from './component/common/notFound';
 import "react-toastify/dist/ReactToastify.css"
 import './App.css';
-import { render } from '@testing-library/react';
+
 import ProtectedRoutes from './component/ProtectedRoutes';
 
 
@@ -31,7 +31,7 @@ class App extends React.Component {
     return (
       <>
         <ToastContainer />
-        <NavBar className="mt-0" user={this.state.user} />
+        <NavBar className="mt-0 " user={this.state.user} />
         <div className="container">
           <Switch>
             {/* <Route path="/movies/:id" render={props => !this.state.user ? <Redirect to="/" /> : <MovieForm {...props} />} /> */}
